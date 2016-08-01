@@ -1,0 +1,22 @@
+{
+  "name": "chemicalweb",
+  "version": "1.0.0",
+  "description": "This is the website of Chemical Engineers 2k19 of NITT",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anirudh-Swaminathan/ChemWeb19Nitt.git"
+  },
+  "author": "Anirudh Swaminathan and Nirabhra Tapaswi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Anirudh-Swaminathan/ChemWeb19Nitt/issues"
+  },
+  "homepage": "https://github.com/Anirudh-Swaminathan/ChemWeb19Nitt#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
