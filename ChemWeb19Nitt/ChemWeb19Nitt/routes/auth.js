@@ -25,11 +25,13 @@ connection.query('SELECT * FROM USERS;', function(err, rows, fields) {
 connection.end();
 
 /* GET login page. */
+
+
 router.post('/', function(req, res, next) {
   if(req.body.pwd == dataStore)
     res.render('auth', { notice: "Authentication Successful!" } );
   else {
-    console.log("Authentication Error!");
+    console.log("Authentication Error!" + req.body.pwd + " -- " + dataStore);
     res.render('index', { notice: "Authentication Failed" } );
   }
 });

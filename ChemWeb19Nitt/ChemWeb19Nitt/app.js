@@ -5,11 +5,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var login = require('./routes/login');
-var auth = require("./routes/auth");
+var auth = require('./routes/auth');
 //var users = require('./routes/users');
 
 var app = express();
@@ -25,10 +24,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
 /*app.use(session({
   secret: '123450QWERTY'
 }));*/
