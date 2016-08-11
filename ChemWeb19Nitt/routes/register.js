@@ -1,18 +1,20 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+/*
 var conn = mysql.createConnection({
   host  :  'localhost',
   user  :  'master',
   password  : 'Admin@123',
   database  : 'chemstudents'
 });
-
+conn.connect();
+*/
 var allStuds;
 
 router.get('/',function(req,res,next){
-  //var conn = req.app.locals.connection;
-  conn.connect();
+  var conn = req.app.locals.connection;
+
   conn.query("SELECT * FROM students as SOLUTION",function(err, rows, fields){
     if(err){
       console.log(err);
@@ -24,7 +26,7 @@ router.get('/',function(req,res,next){
     }
     allStuds = rows;
     res.render('register',{studs: allStuds});
-    conn.end();
   });
 });
+//conn.end();
 module.exports = router;

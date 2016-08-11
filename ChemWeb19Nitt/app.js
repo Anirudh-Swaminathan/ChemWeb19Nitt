@@ -13,13 +13,6 @@ var login = require('./routes/login');
 
 var app = express();
 
-app.locals.connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'master',
-  password: 'Admin@123',
-  database: 'chemstudents'
-});
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
