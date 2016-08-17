@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var expressValidator = require('express-validator');
 
 var routes = require('./routes/index');
 var register = require('./routes/register');
@@ -22,6 +23,20 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator({
+  customValidators : {
+    isWebmail: function(param, roll){
+      if(param===roll+'@nitt.edu'){
+        return true;
+      }
+      return false;
+    },
+    noWhitespace: function(param) {
+      return !(/\s/g.test(param));
+    }
+  }
+}));
+//app.use(expressValidator);
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
