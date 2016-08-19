@@ -2,8 +2,17 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
+var nodemailer = require('nodemailer');
 
 var allStuds;
+
+var transporter = nodemailer.createTransport({
+  service : 'Gmail',
+  auth : {
+    user : 'chemicalnitt19@gmail.com',
+    pass : 'cnitt1519'
+  }
+});
 
 router.get('/',function(req,res,next){
   var conn = req.app.locals.connection;
@@ -138,6 +147,12 @@ router.post('/auth/', function(req, res, next){
               res.setHeader('Content-Type','application/json');
               res.send(JSON.stringify(response));
             });
+
+            // Now send mail
+            var message = "Hello "+name+". This is the admin of Chemical Website";
+            var mailOptions = {
+              
+            }
           });
         });
       } else {
