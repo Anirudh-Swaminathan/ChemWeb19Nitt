@@ -34,9 +34,9 @@ router.get('/auth', function (req, res, next) {
   res.redirect('/register');
 })
 
-// TODO Check for already logged in(SESSION), already registered, but not verified
-// TODO Hash Passwords, generate random 6 digit integer, send mail, and insert into
-// TODO table. Provide captcha in the form.
+// TODO Check for already logged in(SESSION).
+// TODO Hash Passwords, generate random 6 digit integer, send mail.
+// TODO Provide captcha in the form.
 router.post('/auth/', function(req, res, next){
   // Connection variable
   var conn = req.app.locals.connection;
@@ -94,9 +94,8 @@ router.post('/auth/', function(req, res, next){
 
   var errors = req.validationErrors();
   if(!errors){
-
-    // Insert into table
-    conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,pass,mob,acc,isCon,dob,nat], function(err, result){
+    conn.query("SELECT isConf FROM chemstudents.students WHERE roll=?", roll, function(err, rows, fields){
+      // Check if already registered.
       if(err){
         response.msg = 'Failure';
         response.errors = {};
@@ -105,16 +104,48 @@ router.post('/auth/', function(req, res, next){
         res.send(JSON.stringify(response));
         return;
       }
-      console.log('Last insert ID was '+result.insertId);
-      response.msg = 'Success';
-      response.errors = {};
-      response.sqle = {};
-      res.setHeader('Content-Type','application/json');
-      res.send(JSON.stringify(response));
+      if(rows.length==0){
+        // No => insert into table.
+        // Insert into table
+        conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,pass,mob,acc,isCon,dob,nat], function(err, result){
+          if(err){
+            response.msg = 'Failure';
+            response.errors = {};
+            response.sqle = err;
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify(response));
+            return;
+          }
+          console.log('Last insert ID was '+result.insertId);
+          response.msg = 'Success';
+          response.errors = {};
+          response.sqle = {};
+          res.setHeader('Content-Type','application/json');
+          res.send(JSON.stringify(response));
+        });
+      } else {
+        // If in table, check if account is confirmed.
+        console.log('rows[0] is '+rows[0].isConf);
+        if(rows[0].isConf === "false"){
+          //console.log('Response was '+rows);
+          console.log('Redirect to confirm mail');
+          response.msg = 'Redirect';
+          response.errors = {};
+          response.sqle = {};
+          res.setHeader('Content-Type','application/json');
+          res.send(JSON.stringify(response));
+        } else {
+          // If confirmed, respond already registered.
+          console.log('Already registered');
+          response.msg = 'Registered';
+          response.errors = {};
+          response.sqle = {};
+          res.setHeader('Content-Type','application/json');
+          res.send(JSON.stringify(response));
+        }
+      }
     });
-
   } else {
-    //res.send('Errors were '+errors);
     response.msg = 'Failure';
     response.errors = errors;
     response.sqle = {};
