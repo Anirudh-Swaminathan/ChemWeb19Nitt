@@ -1,15 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-/*
-var conn = mysql.createConnection({
-  host  :  'localhost',
-  user  :  'master',
-  password  : 'Admin@123',
-  database  : 'chemstudents'
-});
-conn.connect();
-*/
+var bcrypt = require('bcrypt');
+
 var allStuds;
 
 router.get('/',function(req,res,next){
@@ -34,8 +27,8 @@ router.get('/auth', function (req, res, next) {
   res.redirect('/register');
 })
 
-// TODO Check for already logged in(SESSION).
-// TODO Hash Passwords, generate random 6 digit integer, send mail.
+// TODO Check for already logged in(SESSION). AJAX callbacks for register page.
+// TODO Send mail.
 // TODO Provide captcha in the form.
 router.post('/auth/', function(req, res, next){
   // Connection variable
@@ -60,7 +53,7 @@ router.post('/auth/', function(req, res, next){
   var nat = req.body.place;
   var pass = req.body.pass;
   var conf = req.body.confp;
-  var acc = 12345;
+  var acc = Math.floor(Math.random() * 900000) + 100000;
   var isCon = "false";
 
   // Roll Number Validation
@@ -106,22 +99,46 @@ router.post('/auth/', function(req, res, next){
       }
       if(rows.length==0){
         // No => insert into table.
-        // Insert into table
-        conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,pass,mob,acc,isCon,dob,nat], function(err, result){
+        bcrypt.genSalt(10, function(err, salt){
           if(err){
+            // Salt generation error.
+            console.log('Salt generation error');
             response.msg = 'Failure';
-            response.errors = {};
-            response.sqle = err;
+            response.errors = err;
+            response.sqle = {};
             res.setHeader('Content-Type','application/json');
             res.send(JSON.stringify(response));
             return;
           }
-          console.log('Last insert ID was '+result.insertId);
-          response.msg = 'Success';
-          response.errors = {};
-          response.sqle = {};
-          res.setHeader('Content-Type','application/json');
-          res.send(JSON.stringify(response));
+          bcrypt.hash(pass, salt, function(err, hash){
+            if(err){
+              // Hashing error.
+              console.log('Hashing error');
+              response.msg = 'Failure';
+              response.errors = err;
+              response.sqle = {};
+              res.setHeader('Content-Type','application/json');
+              res.send(JSON.stringify(response));
+              return;
+            }
+            // Insert into table
+            conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,hash,mob,acc,isCon,dob,nat], function(err, result){
+              if(err){
+                response.msg = 'Failure';
+                response.errors = {};
+                response.sqle = err;
+                res.setHeader('Content-Type','application/json');
+                res.send(JSON.stringify(response));
+                return;
+              }
+              console.log('Last insert ID was '+result.insertId);
+              response.msg = 'Success';
+              response.errors = {};
+              response.sqle = {};
+              res.setHeader('Content-Type','application/json');
+              res.send(JSON.stringify(response));
+            });
+          });
         });
       } else {
         // If in table, check if account is confirmed.
