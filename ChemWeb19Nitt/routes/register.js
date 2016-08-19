@@ -37,7 +37,7 @@ router.get('/auth', function (req, res, next) {
 })
 
 // TODO Check for already logged in(SESSION). AJAX callbacks for register page.
-// TODO Send mail.
+// TODO Build 2 step verification page.
 // TODO Provide captcha in the form.
 router.post('/auth/', function(req, res, next){
   // Connection variable
@@ -141,18 +141,40 @@ router.post('/auth/', function(req, res, next){
                 return;
               }
               console.log('Last insert ID was '+result.insertId);
+            });
+
+            // Now send mail
+            var message = "<p>Hello "+name+". This is the admin of Chemical Website."+
+            "Your verification code is <b>"+acc+"</b>. If you didn\'t register, please"+
+            " kindly ignore the above message.</p>";
+            var mailOptions = {
+              from : 'adminchem@nitt.edu',
+              to : 'aniswami97@gmail.com',
+              // to : web,
+              // TODO Change the mail to address at production level.
+              subject : 'Node Mailer Test',
+              html : message
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+              if(error){
+                console.log(error);
+                response.msg = 'Failure';
+                response.errors = error;
+                response.sqle = {};
+                res.setHeader('Content-Type','application/json');
+                res.send(JSON.stringify(response));
+                return;
+              }
+              // May insert data, but mail failure => can't verify.
+              // TODO Change this logic for better UX.
               response.msg = 'Success';
               response.errors = {};
               response.sqle = {};
               res.setHeader('Content-Type','application/json');
               res.send(JSON.stringify(response));
+              console.log('Message sent. Info is '+info.response);
             });
 
-            // Now send mail
-            var message = "Hello "+name+". This is the admin of Chemical Website";
-            var mailOptions = {
-              
-            }
           });
         });
       } else {
