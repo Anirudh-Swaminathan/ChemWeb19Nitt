@@ -34,15 +34,12 @@ router.get('/auth', function (req, res, next) {
   res.redirect('/register');
 })
 
+// TODO Check for already logged in(SESSION), already registered, but not verified
+// TODO Hash Passwords, generate random 6 digit integer, send mail, and insert into
+// TODO table. Provide captcha in the form.
 router.post('/auth/', function(req, res, next){
-  var roll = req.body.roll;
-  //var name = req.body.name;
-  //var web = req.body.email;
-  //var mob = req.body.mobile;
-  //var dob = req.body.dob;
-  //var nat = req.body.place;
-  var pass = req.body.pass;
-  //var conf = req.body.confp;
+  // Connection variable
+  var conn = req.app.locals.connection;
 
   var response = {};
 
@@ -54,6 +51,17 @@ router.post('/auth/', function(req, res, next){
   req.sanitize('place').escape();
   req.sanitize('pass').escape();
   req.sanitize('conf').escape();
+
+  var roll = req.body.roll;
+  var name = req.body.name;
+  var web = req.body.email;
+  var mob = req.body.mobile;
+  var dob = req.body.dob;
+  var nat = req.body.place;
+  var pass = req.body.pass;
+  var conf = req.body.confp;
+  var acc = 12345;
+  var isCon = "false";
 
   // Roll Number Validation
   req.assert('roll','Roll Number must not be empty').notEmpty();
@@ -86,20 +94,32 @@ router.post('/auth/', function(req, res, next){
 
   var errors = req.validationErrors();
   if(!errors){
-    //res.send('Success');
-    response.msg = 'Success';
-    response.errors = {};
+
+    // Insert into table
+    conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,pass,mob,acc,isCon,dob,nat], function(err, result){
+      if(err){
+        response.msg = 'Failure';
+        response.errors = {};
+        response.sqle = err;
+        res.setHeader('Content-Type','application/json');
+        res.send(JSON.stringify(response));
+        return;
+      }
+      console.log('Last insert ID was '+result.insertId);
+      response.msg = 'Success';
+      response.errors = {};
+      response.sqle = {};
+      res.setHeader('Content-Type','application/json');
+      res.send(JSON.stringify(response));
+    });
+
   } else {
     //res.send('Errors were '+errors);
     response.msg = 'Failure';
     response.errors = errors;
+    response.sqle = {};
+    res.setHeader('Content-Type','application/json');
+    res.send(JSON.stringify(response));
   }
-
-  res.setHeader('Content-Type','application/json');
-  res.send(JSON.stringify(response));
-
-  //res.send(roll);
-  //res.send('OK.'+roll+' '+name+' '+web+' '+mob+' '+dob+' '+nat+' '+pass+' '+conf+' ');
 });
-//conn.end();
 module.exports = router;
