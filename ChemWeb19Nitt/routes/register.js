@@ -14,6 +14,7 @@ var transporter = nodemailer.createTransport({
   }
 });
 
+// GET the register page.
 router.get('/',function(req,res,next){
   var conn = req.app.locals.connection;
 
@@ -31,10 +32,11 @@ router.get('/',function(req,res,next){
   });
 });
 
+// Stop get requests to auth page.
 router.get('/auth', function (req, res, next) {
   //res.send('Please fill the form first');
   res.redirect('/register');
-})
+});
 
 // TODO Check for already logged in(SESSION). AJAX callbacks for register page.
 // TODO Build 2 step verification page.
@@ -207,4 +209,111 @@ router.post('/auth/', function(req, res, next){
     res.send(JSON.stringify(response));
   }
 });
+
+// GET verify page.
+router.get('/verify', function(req, res, next){
+  res.render('verify');
+});
+
+// Stop get requests to auth page.
+router.get('/verify/auth', function (req, res, next) {
+  //res.send('Please fill the form first');
+  res.redirect('/register/verify');
+});
+
+// POST to authentication page.
+router.post('/verify/auth/', function(req, res, next){
+  // Connection variable
+  var conn = req.app.locals.connection;
+
+  var response = {};
+
+  req.sanitize('roll').escape();
+  req.sanitize('cod').escape();
+
+  var roll = req.body.roll;
+  var cod = req.body.cod;
+
+  // Roll Number Validation
+  req.assert('roll','Roll Number must not be empty').notEmpty();
+  req.assert('roll','Roll Number must be integer').isInt();
+  req.assert('roll','Roll Number must be 102115***').matches(/^102115\d{3}$/);
+
+  // Code validation
+  req.assert('cod','Verification code must not be empty').notEmpty();
+  req.assert('cod','It must be 6 digits long').matches(/^\d{6}$/);
+
+  var errors = req.validationErrors();
+
+  if(!errors){
+    // Check if user is in table.
+    // No => Redirect to registration page.
+    // Yes => Check if user has confirmed.
+    // No => Update table.  Yes => Registered.
+    conn.query("SELECT isConf, acc FROM chemstudents.students WHERE roll=?", roll, function(err, rows, fields){
+      if(err){
+        response.msg = 'Failure';
+        response.errors = {};
+        response.sqle = err;
+        res.setHeader('Content-Type','application/json');
+        res.send(JSON.stringify(response));
+        return;
+      }
+      if(rows.length==0){
+        // User hasn't registered yet.
+        response.msg = 'Redirect';
+        response.errors = {};
+        response.sqle = {};
+        res.setHeader('Content-Type','application/json');
+        res.send(JSON.stringify(response));
+      } else {
+        if(rows[0].isConf === "false"){
+          // If not confirmed, confirm account now.
+          if(cod === rows[0].acc){
+            // Correct Access.
+            conn.query("UPDATE chemstudents.students SET isConf = 'true' WHERE roll=?", roll, function(err, result){
+              if(err){
+                response.msg = 'Failure';
+                response.errors = {};
+                response.sqle = err;
+                res.setHeader('Content-Type','application/json');
+                res.send(JSON.stringify(response));
+                return;
+              }
+              console.log('Changed '+result.changedRows+' rows.');
+              response.msg = 'Success';
+              response.errors = {};
+              response.sqle = {};
+              res.setHeader('Content-Type','application/json');
+              res.send(JSON.stringify(response));
+            });
+          } else {
+            // Incorrect acc.
+            console.log('Incorrect access');
+            response.msg = 'Incorrect';
+            response.errors = {};
+            response.sqle = {};
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify(response));
+          }
+        } else if(rows[0].isConf === "true"){
+          // If confirmed, respond already registered.
+          console.log('Already registered');
+          response.msg = 'Registered';
+          response.errors = {};
+          response.sqle = {};
+          res.setHeader('Content-Type','application/json');
+          res.send(JSON.stringify(response));
+        }
+      }
+    });
+  } else {
+    response.msg = 'Failure';
+    response.errors = errors;
+    response.sqle = {};
+    res.setHeader('Content-Type','application/json');
+    res.send(JSON.stringify(response));
+  }
+});
+
 module.exports = router;

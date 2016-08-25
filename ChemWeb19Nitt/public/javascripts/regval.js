@@ -137,3 +137,29 @@ function isLeap(ye){
   }
   return ret;
 }
+
+// AJAX
+document.getElementById('regBtn').addEventListener("submit", function(e){
+  e.preventDefault();
+  var f = e.target;
+  var data = new FormData(f);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function(){
+    if(xhttp.readyState == 4 && xhttp.status == 200){
+      // TODO Check JSON response.
+      var json = xhttp.responseText;
+			var jsonObj = JSON.parse(json);
+      var msg = jsonObj.msg;
+
+      // If Success. Redirect to verification page.
+      if(msg === 'Success'){
+        alert('Please verify your account now');
+        window.location.href = '/verify';
+      } else {
+        alert('Message is '+msg);
+      }
+    }
+  };
+  xhttp.open(f.method,f.action,true);
+	xhttp.send(data);
+});
