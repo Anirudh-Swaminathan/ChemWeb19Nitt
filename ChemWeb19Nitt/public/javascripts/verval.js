@@ -22,3 +22,26 @@ function validate(){
     }
     return true;
 }
+
+// AJAX
+document.getElementById('veriform').addEventListener("submit", function(e){
+  alert('Clicked');
+  e.preventDefault();
+  var f = e.target;
+  var data = new FormData(f);
+  alert('data,method,action is '+data+' '+f.method+' '+f.action);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function(){
+    if(xhttp.readyState == 4 && xhttp.status == 200){
+      // TODO Check JSON response.
+      var json = xhttp.responseText;
+			var jsonObj = JSON.parse(json);
+      var msg = jsonObj.msg;
+
+      alert('Message is '+msg);
+      alert('Errors are '+jsonObj.errors[0].msg);
+    }
+  }
+  xhttp.open(f.method,f.action,true);
+	xhttp.send(data);
+});
