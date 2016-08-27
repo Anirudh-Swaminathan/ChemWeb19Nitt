@@ -139,27 +139,63 @@ function isLeap(ye){
 }
 
 // AJAX
-document.getElementById('regBtn').addEventListener("submit", function(e){
+// 4 possible outcomes
+
+// 1. Success => redirect to verify page
+// 2. Redirect => redirect to verify page
+// 3.Failure => Stay on the page.
+// 4. Registered => redirect to login page.
+document.getElementById('regform').addEventListener("submit", function (e) {
+  //alert('Going to submit');
   e.preventDefault();
   var f = e.target;
-  var data = new FormData(f);
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function(){
     if(xhttp.readyState == 4 && xhttp.status == 200){
-      // TODO Check JSON response.
       var json = xhttp.responseText;
-			var jsonObj = JSON.parse(json);
+      var jsonObj = JSON.parse(json);
       var msg = jsonObj.msg;
-
-      // If Success. Redirect to verification page.
-      if(msg === 'Success'){
-        alert('Please verify your account now');
-        window.location.href = '/verify';
-      } else {
-        alert('Message is '+msg);
+      var errors = jsonObj.errors;
+      var sqle = jsonObj.sqle;
+      switch (msg) {
+        case 'Success':
+          alert('Registration successful. Please check webmail to verify your account');
+          window.location.href = '/register/verify';
+          break;
+        case 'Redirect':
+          alert('Already registered. Please check webmail to verify your account');
+          window.location.href = '/register/verify';
+          break;
+        case 'Failure':
+          var mess = '';
+          if(errors.length !== 0){
+            mess += errors[0].msg;
+          } else {
+            mess += sqle[0].msg;
+          }
+          alert('Failed to register. Error was '+mess);
+          break;
+        case 'Registered':
+          alert('Already registered.');
+          window.location.href = '../login';
+          break;
+        default:
+          alert('Not my API!!!');
+          break;
       }
     }
-  };
-  xhttp.open(f.method,f.action,true);
-	xhttp.send(data);
+  }
+  var values = {};
+  $.each($('#regform').serializeArray(), function(i, field) {
+    if(field.name === 'dob' || field.name === 'place'){
+      if(field.value !== ''){
+        values[field.name] = field.value;
+      }
+    } else {
+      values[field.name] = field.value;
+    }
+  });
+  xhttp.open(f.method, f.action, true);
+  xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhttp.send(JSON.stringify(values));
 });

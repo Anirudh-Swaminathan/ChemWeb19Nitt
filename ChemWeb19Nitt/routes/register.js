@@ -39,7 +39,6 @@ router.get('/auth', function (req, res, next) {
 });
 
 // TODO Check for already logged in(SESSION). AJAX callbacks for register page.
-// TODO Build 2 step verification page.
 // TODO Provide captcha in the form.
 router.post('/auth/', function(req, res, next){
   // Connection variable
@@ -51,7 +50,7 @@ router.post('/auth/', function(req, res, next){
   req.sanitize('name').escape();
   req.sanitize('email').escape();
   req.sanitize('mobile').escape();
-  req.sanitize('dob').escape();
+  //req.sanitize('dob').escape();
   req.sanitize('place').escape();
   req.sanitize('pass').escape();
   req.sanitize('conf').escape();
