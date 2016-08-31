@@ -1,7 +1,0 @@
-1. Failure in send mail must be handled.
-
-2. Integrate sessions to prevent logged in users from accessing the register route.
-
-3. Make error handling better in response.
-
-4. Provide CPATCHA in registration form.
