@@ -47,6 +47,7 @@ function validate(){
 
   // Check DOB
   if(dob!=""){
+    //alert('DOB is '+dob);
     if(dob === "" || dob.length!=10){
       alert('Incorrect dob. Must be yyyy/mm/dd');
       return false;
@@ -187,6 +188,7 @@ document.getElementById('regform').addEventListener("submit", function (e) {
   }
   var values = {};
   $.each($('#regform').serializeArray(), function(i, field) {
+    //alert('Name is '+field.name);
     if(field.name === 'dob' || field.name === 'place'){
       if(field.value !== ''){
         values[field.name] = field.value;
