@@ -38,7 +38,7 @@ router.post('/auth/', function(req, res, next){
   req.sanitize('email').escape();
   req.sanitize('mobile').escape();
   //req.sanitize('dob').escape();
-  req.sanitize('place').escape();
+  //req.sanitize('place').escape(); // Unnecessary field.
   req.sanitize('pass').escape();
   req.sanitize('conf').escape();
 
@@ -47,7 +47,7 @@ router.post('/auth/', function(req, res, next){
   var web = req.body.email;
   var mob = req.body.mobile;
   var dob = req.body.dob;
-  var nat = req.body.place;
+  //var nat = req.body.place; // Unnecessary field!!
   var pass = req.body.pass;
   var conf = req.body.confp;
   var acc = Math.floor(Math.random() * 900000) + 100000;
@@ -74,8 +74,8 @@ router.post('/auth/', function(req, res, next){
   // Check DOB
   req.assert('dob','Not a date').optional().isDate();
 
-  // Check place
-  req.assert('place','Invalid Place').optional().matches(/[a-zA-Z][a-zA-Z ]+|[a-zA-Z]/);
+  // Check place - Unnecessary field.
+  //req.assert('place','Invalid Place').optional().matches(/[a-zA-Z][a-zA-Z ]+|[a-zA-Z]/);
 
   // Check Passwords
   req.assert('pass','Password must not be empty, and mustn\'t contain any whitespace').notEmpty().noWhitespace();
@@ -119,7 +119,7 @@ router.post('/auth/', function(req, res, next){
               return;
             }
             // Insert into table
-            conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob,place) VALUES(?,?,?,?,?,?,?,?,?)",[roll,name,web,hash,mob,acc,isCon,dob,nat], function(err, result){
+            conn.query("INSERT INTO chemstudents.students(roll,name,webmail,password,mobile,acc,isConf,dob) VALUES(?,?,?,?,?,?,?,?)",[roll,name,web,hash,mob,acc,isCon,dob], function(err, result){
               if(err){
                 response.msg = 'Failure';
                 response.errors = {};

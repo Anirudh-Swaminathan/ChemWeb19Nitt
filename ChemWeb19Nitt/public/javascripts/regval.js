@@ -9,7 +9,7 @@ function validate(){
   var e = document.getElementById('email').value;
   var m = document.getElementById('mobile').value;
   var dob = document.getElementById('dob').value;
-  var nat = document.getElementById('place').value;
+  //var nat = document.getElementById('place').value;
   var pa = document.getElementById('pass').value;
   var con = document.getElementById('confp').value;
 
@@ -31,8 +31,6 @@ function validate(){
     alert('Webmail must be <roll>@nitt.edu');
     return false;
   } else {
-    //alert('e is '+e+'\n r is '+r);
-    //alert('e start is '+e.substr(0,9)+'\n e end is '+e.substr(9,18));
     if(e.substr(0,9)!=r || e.substr(9,18)!='@nitt.edu'){
       alert('Webmail must be <roll>@nitt.edu');
       return false;
@@ -47,7 +45,6 @@ function validate(){
 
   // Check DOB
   if(dob!=""){
-    //alert('DOB is '+dob);
     if(dob === "" || dob.length!=10){
       alert('Incorrect dob. Must be yyyy/mm/dd');
       return false;
@@ -76,14 +73,12 @@ function validate(){
       return false;
     }
     if(mon==2){
-      //alert('It\'s February!');
       if(isLeap(yea)){
         if(day>29){
           alert('Incorrect date. Must be <=29');
           return false;
         }
       } else {
-        //alert('Not a leap year');
         if(day>28){
           alert('Incorrect date. Must be <=28');
           return false;
@@ -92,6 +87,8 @@ function validate(){
     }
   }
 
+  /*
+  Unnecessary field!!
   // Check place
   if(nat!=""){
     if(!(nat.match('[a-zA-Z][a-zA-Z ]+|[a-zA-Z]'))){
@@ -99,7 +96,7 @@ function validate(){
       return false;
     }
   }
-
+  */
   // Check pass and confp
   if(pa == "" || con == ""){
     alert('Password and confirm pasword must not be null');
@@ -147,7 +144,6 @@ function isLeap(ye){
 // 3.Failure => Stay on the page.
 // 4. Registered => redirect to login page.
 document.getElementById('regform').addEventListener("submit", function (e) {
-  //alert('Going to submit');
   e.preventDefault();
   var f = e.target;
   var xhttp = new XMLHttpRequest();
@@ -188,8 +184,7 @@ document.getElementById('regform').addEventListener("submit", function (e) {
   }
   var values = {};
   $.each($('#regform').serializeArray(), function(i, field) {
-    //alert('Name is '+field.name);
-    if(field.name === 'dob' || field.name === 'place'){
+    if(field.name === 'dob'){ // Removed Unnecessary field.
       if(field.value !== ''){
         values[field.name] = field.value;
       }
