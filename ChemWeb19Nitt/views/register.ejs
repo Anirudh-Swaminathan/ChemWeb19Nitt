@@ -19,13 +19,6 @@
 <body>
   <div class="container-fluid">
   <h1>This is the register heading</h1>
-  <ul>
-
-    <% for(var i=0; i<studs.length; ++i){ %>
-      <li><%= studs[i].name %></li>
-    <% } %>
-  </ul>
-
   <form role="form" id="regform" action="/register/auth" method="post">
     <div class="form-group">
       <label for="roll">Roll:</label>

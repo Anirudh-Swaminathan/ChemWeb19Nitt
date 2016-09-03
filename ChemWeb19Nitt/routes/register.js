@@ -16,20 +16,7 @@ var transporter = nodemailer.createTransport({
 
 // GET the register page.
 router.get('/',function(req,res,next){
-  var conn = req.app.locals.connection;
-
-  conn.query("SELECT * FROM students as SOLUTION",function(err, rows, fields){
-    if(err){
-      console.log(err);
-      throw err;
-      return;
-    }
-    for(var i=0; i<rows.length; ++i){
-      console.log(rows[i]);
-    }
-    allStuds = rows;
-    res.render('register',{studs: allStuds});
-  });
+  res.render('register');
 });
 
 // Stop get requests to auth page.
