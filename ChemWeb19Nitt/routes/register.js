@@ -16,12 +16,19 @@ var transporter = nodemailer.createTransport({
 
 // GET the register page.
 router.get('/',function(req,res,next){
+  // Cache control
+  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.setHeader('pragma', 'no-cache');
+  res.setHeader("Expires", "0");
   res.render('register');
 });
 
 // Stop get requests to auth page.
 router.get('/auth', function (req, res, next) {
-  //res.send('Please fill the form first');
+  // Cache control
+  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.setHeader('pragma', 'no-cache');
+  res.setHeader("Expires", "0");
   res.redirect('/register');
 });
 
@@ -198,12 +205,19 @@ router.post('/auth/', function(req, res, next){
 
 // GET verify page.
 router.get('/verify', function(req, res, next){
+  // Cache-Control
+  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.setHeader('pragma', 'no-cache');
+  res.setHeader("Expires", "0");
   res.render('verify');
 });
 
 // Stop get requests to auth page.
 router.get('/verify/auth', function (req, res, next) {
-  //res.send('Please fill the form first');
+  // Cache-Control
+  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.setHeader('pragma', 'no-cache');
+  res.setHeader("Expires", "0");
   res.redirect('/register/verify');
 });
 

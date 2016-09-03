@@ -156,10 +156,12 @@ document.getElementById('regform').addEventListener("submit", function (e) {
       var sqle = jsonObj.sqle;
       switch (msg) {
         case 'Success':
+          $('#regform')[0].reset();
           alert('Registration successful. Please check webmail to verify your account');
           window.location.href = '/register/verify';
           break;
         case 'Redirect':
+          $('#regform')[0].reset();
           alert('Already registered. Please check webmail to verify your account');
           window.location.href = '/register/verify';
           break;
@@ -173,6 +175,7 @@ document.getElementById('regform').addEventListener("submit", function (e) {
           alert('Failed to register. Error was '+mess);
           break;
         case 'Registered':
+          $('#regform')[0].reset();
           alert('Already registered.');
           window.location.href = '../login';
           break;

@@ -43,10 +43,12 @@ document.getElementById('veriform').addEventListener("submit", function(e){
       var sqle = jsonObj.sqle;
       switch (msg) {
         case 'Success':
+          $('#veriform')[0].reset();
           alert('Verified account successfully');
           window.location.href = '../login';
           break;
         case 'Redirect':
+          $('#veriform')[0].reset();
           alert('Please register first');
           window.location.href = '../register';
           break;
@@ -60,9 +62,11 @@ document.getElementById('veriform').addEventListener("submit", function(e){
           alert('Failure to verify. Error was '+mess);
           break;
         case 'Incorrect':
+          $('#veriform')[0].reset();
           alert('Roll Number or verification code is incorrect');
           break;
         case 'Registered':
+          $('#veriform')[0].reset();
           alert('Already registered');
           window.location.href = '../login';
           break;
