@@ -5,3 +5,23 @@
 3. Make error handling better in response.
 
 4. Provide CPATCHA in registration form.
+
+5. Finalize DB Schema.
+
+6. Merge login, registration, and mail modules.
+
+7. Include Teacher Login, and registration.
+
+8. Do personal chat for all users.
+
+9. Introduce Post Moderation in the dashboard.
+
+10. Provide update profile, and forgot password functionalities.
+
+11. Integrate IMAP login, if possible.
+
+12. Do a rank calculator, attendance manager, and a rank predictor using ML.
+
+13. Make front end more attractive.
+
+14. Geneate graphs out of the user data.
